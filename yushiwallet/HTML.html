@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+	<style>
+      table {
+        width: 35%;
+		height 200px;
+		margin-top: 100px;
+		
+      }
+      table, th, td {
+        border: 3px solid #bcbcbc;
+		
+      }
+	  thead{
+		background-color: #0d47a1;
+		color: #ffffff;
+	  }
+	  tbody{
+		background-color: white;
+	  }
+	  
+    </style>
+
+    </head>
+	
+	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+	
+	<script src="lib/web3.min.js"></script>
+	
+	<script>
+			var Web3 = require("web3"),
+			web3 = new Web3();
+			web3.setProvider(new web3.providers.HttpProvider("http://localhost:8545"));
+			
+				
+			function getBalance() { 
+				//셀렉트한 어카운트를 불러온다.
+				var addr = $('#account_select').val()
+				//셀렉트한 어카운트 밸런스값을 들고 온다
+				var blc = web3.fromWei(web3.eth.getBalance(addr))
+				//밸런스 인풋에 어카운트 밸런스값을 불러온다.
+				$('#balance_input').val(blc)
+				
+				}
+			
+		$(document).ready(function() {
+
+		
+			
+			 //계정만들기버튼을 누르면
+			$('#new_accounts').click(function(){
+				//password를 입력하고
+				var createNew = 
+				web3.personal.newAccount($('#new_password').val());
+				
+
+				//account리스트에 추가가 된다.
+				hihi = '<option value="'+ createNew +'">'
+					+ createNew +
+					'</option>'
+					
+					//<option value""></option>
+			//password란을 공백으로 만들어준다.
+			$('#new_password').val('');
+			$('#account_select').append(hihi);
+			$('#receiver_select').append(hihi);
+			
+			})		
+		
+			
+			$('#send_button').click(function() {
+				console.log($('#account_select').val(), $('#password_input').val())
+				//비밀번호 체크
+			if 
+			(
+			web3.personal.unlockAccount($('#account_select').val(), $('#password_input').val())
+			)
+				{
+					var transactionObj = {
+					//보내는 계정주소들고 오기
+					from: $('#account_select').val(),
+					//받을 계정주소들고 오기
+					to: $('#receiver_select').val(),
+					//보낼 값 불러오기
+					value: web3.toWei($('#value_input').val())
+					}
+					
+				}
+			
+			web3.eth.sendTransaction(transactionObj, function(err, res){
+				if(err){
+					console.log(err)
+				}
+				else{
+					console.log(res)
+					
+				}		
+			})
+		})
+
+		
+			
+			var account_list = web3.eth.accounts  
+						
+			
+			
+			var str;
+			
+			account_list.forEach(function(aa){
+				
+			
+				str = '<option value="'+ aa +'">'
+					+ aa +
+					'</option>'
+					//<option value""></option>
+			$(account_select).append(str);
+			$(receiver_select).append(str);
+			
+			
+			//화면이 시작되었을때 첫 화면에 밸런스값을 보이게 한다
+				getBalance()
+
+			$('#account_select').change(function dep(){
+				getBalance()
+			})	
+		})		
+	})		
+
+
+
+	
+
+	
+	
+	</script>
+    
+	<body background="images.png">
+
+        <!-- Add your site or application content here -->
+		<table align="center">
+			<thead>
+				<tr>
+					<td colspan=2>
+						<div id="mywallet_div" style="text-align:center"><h1>My Wallet</h1></div>
+							<div style="text-align:center">       
+								password
+								<input id="new_password" type="PASSWORD">
+								</input>	
+								<button id="new_accounts">계정만들기
+								</button>
+							</div>
+					</td>			
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						<h2> ACCOUNT 
+							<select id="account_select">
+							</select> 
+						</h2>
+					</td>
+					<td>
+						<h2>BALANCE <input id="balance_input" type="number" value="" placeholder="balance..." readonly></h2>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<h2> RECEIVE 
+							<select id="receiver_select" placeholder="receiver..." >
+							</select>  
+						<h2/>
+					</td>
+					<td>
+						<h2> VALUE <input id="value_input" type="number" value="5" placeholder="value..."><br/></h2>
+					</td>
+				</tr>
+					<td colspan=2>
+						<h2> PASSWORD <input id="password_input" type="PASSWORD" value="password" placeholder="password..."><h2/>
+								<button id="send_button" style="color: yellow; background:green; font-size:1em; border-radius:0.5em; padding:5px 20px;">
+								send
+								</button>
+							<div style="text-align:center">
+								<button id="process_button" style="color: white; background:black; font-size:1em; border-radius:0.5em; padding:5px 20px;">
+								Process payment
+								</button>
+							</div>
+							
+					</td>
+								
+			</tbody>			
+		</table>
+		
+    </body>
+
+</html>
